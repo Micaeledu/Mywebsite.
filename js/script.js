@@ -69,7 +69,8 @@ document.addEventListener("DOMContentLoaded", () => {
   }
 
   /* ---------------------------------------------
-     GALLERY — pinned horizontal scroll (all screen sizes)
+     GALLERY — pinned horizontal scroll (desktop/tablet)
+     Mobile gets a normal vertical stack with a fade-in reveal instead.
   --------------------------------------------- */
   const gallerySection = document.querySelector(".gallery-section");
   const galleryTrack = document.querySelector(".gallery-track");
@@ -79,23 +80,59 @@ document.addEventListener("DOMContentLoaded", () => {
 
   if (prefersReducedMotion) return;
 
-  gallerySection.classList.add("js-pin-enabled");
+  mm.add(
+    {
+      isDesktop: "(min-width: 900px)",
+      isMobile: "(max-width: 899px)",
+    },
+    (context) => {
+      const { isDesktop } = context.conditions;
+      const cards = gsap.utils.toArray(".project-card");
 
-  const getDistance = () =>
-    Math.max(0, galleryTrack.scrollWidth - window.innerWidth);
+      if (isDesktop) {
+        gallerySection.classList.add("js-pin-enabled");
 
-  ScrollTrigger.create({
-    trigger: galleryPin,
-    start: "top top",
-    end: () => "+=" + getDistance(),
-    pin: true,
-    scrub: 1,
-    invalidateOnRefresh: true,
-    animation: gsap.to(galleryTrack, {
-      x: () => -getDistance(),
-      ease: "none",
-    }),
-  });
+        const getDistance = () =>
+          Math.max(0, galleryTrack.scrollWidth - window.innerWidth);
+
+        const pinTrigger = ScrollTrigger.create({
+          trigger: galleryPin,
+          start: "top top",
+          end: () => "+=" + getDistance(),
+          pin: true,
+          scrub: 1,
+          invalidateOnRefresh: true,
+          animation: gsap.to(galleryTrack, {
+            x: () => -getDistance(),
+            ease: "none",
+          }),
+        });
+
+        return () => {
+          gallerySection.classList.remove("js-pin-enabled");
+          pinTrigger.kill();
+        };
+      }
+
+      if (isMobile) {
+        gsap.set(cards, { opacity: 0, y: 60 });
+
+        cards.forEach((card) => {
+          gsap.to(card, {
+            opacity: 1,
+            y: 0,
+            duration: 0.9,
+            ease: "power3.out",
+            scrollTrigger: {
+              trigger: card,
+              start: "top 88%",
+              toggleActions: "play none none reverse",
+            },
+          });
+        });
+      }
+    }
+  );
 
   /* ---------------------------------------------
      BROWSER MOCK — subtle mouse tilt (fine pointer only)

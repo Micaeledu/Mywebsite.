@@ -260,6 +260,7 @@ a { color: inherit; }
   background: var(--ink);
   color: var(--paper);
   padding: clamp(56px, 10vh, 90px) 0;
+  overflow: hidden;
 }
 
 .gallery-intro {
@@ -347,11 +348,23 @@ a { color: inherit; }
   margin-right: 10px;
 }
 
-/* Pinned horizontal-scroll enhancement (JS adds this class, any screen size) */
+/* Pinned horizontal-scroll enhancement (JS adds this class on desktop/tablet) */
 .gallery-section.js-pin-enabled .gallery-track {
   overflow: visible;
   flex-wrap: nowrap;
   padding-bottom: 0;
+}
+
+/* Mobile: no horizontal scroll-jacking — cards stack and reveal on scroll */
+@media (max-width: 899px) {
+  .gallery-track {
+    flex-direction: column;
+    overflow: visible;
+  }
+
+  .project-card {
+    width: 100%;
+  }
 }
 
 /* ============================================
