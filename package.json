@@ -1,0 +1,9 @@
+{
+  "name": "minha-empresa-site",
+  "version": "0.1.0",
+  "private": true,
+  "description": "Landing page pessoal de portfólio — Micael Eduardo, desenvolvedor de sites em Salvador, BA.",
+  "scripts": {
+    "dev": "npx --yes serve -l 3000 ."
+  }
+}
